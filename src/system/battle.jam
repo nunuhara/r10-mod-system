@@ -1,0 +1,19 @@
+	; if (コード名.StartsWith("mod_") { ... }
+	.LOCALREF コード名
+	S_PUSH "mod_"
+	CALLHLL String StartsWith -1
+	IFNZ mod_start
+	JUMP mod_end
+mod_start:
+	.LOCALREF コード名
+	A_REF
+	.LOCALREF ▲自動戦闘
+	.LOCALREF ▲属性０
+	.LOCALREF ▲属性１
+	.LOCALREF ▲属性２
+	CALLFUNC _ML_battle
+	RETURN
+mod_end:
+	; no-op for label
+	PUSH 0
+	POP

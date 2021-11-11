@@ -1,0 +1,15 @@
+override void game_main(void)
+{
+	MainEXFile.AddEX("Rance10ModEX");
+	AFL_AFA_CG_Add("Rance10ModCG");
+	AFL_AFA_Flat_Add("Rance10ModFlat");
+	AFL_AFA_Sound_Add("Rance10ModSound");
+	ML_HOOK_init();
+	super();
+}
+
+void ML_HOOK_init(void)
+{
+	//my_global = 123;
+	//super();
+}

@@ -1,0 +1,174 @@
+/*
+ * In order to add a quest to the quest list, we need to call the function
+ * ＞__フェイズ登録 from _within_ the function Ｔ__フェイズＡ. In order to
+ * do that, we hook ＞__フェイズ登録 and have it call itself recursively,
+ * using a global variable to ensure that out code only runs once per
+ * invocation of Ｔ__フェイズＡ.
+ */
+int _ML_added_extra_missions;
+
+override void Ｔ準備フェイズＡ(void)
+{
+	_ML_added_extra_missions = 0;
+	super();
+}
+
+override void Ｔ作戦フェイズＡ(void)
+{
+	_ML_added_extra_missions = 0;
+	super();
+}
+
+override void Ｔ拠点フェイズＡ(void)
+{
+	_ML_added_extra_missions = 0;
+	super();
+}
+
+override void ＴターントップフェイズＡ(void)
+{
+	_ML_added_extra_missions = 0;
+	super();
+}
+
+override void Ｔターンエンドフェイズ１Ａ(void)
+{
+	_ML_added_extra_missions = 0;
+	super();
+}
+
+override void Ｔターンエンドフェイズ２Ａ(void)
+{
+	_ML_added_extra_missions = 0;
+	super();
+}
+
+override void ＞準備フェイズ登録(string name)
+{
+	if (!_ML_added_extra_missions) {
+		_ML_added_extra_missions = 1;
+		ML_HOOK_add_prep_phase_quests();
+	}
+	super(name);
+}
+
+override void ＞作戦フェイズ登録(string name)
+{
+	if (!_ML_added_extra_missions) {
+		_ML_added_extra_missions = 1;
+		ML_HOOK_add_operation_phase_quests();
+	}
+	super(name);
+}
+
+override void ＞拠点フェイズ登録(string name)
+{
+	if (!_ML_added_extra_missions) {
+		_ML_added_extra_missions = 1;
+		ML_HOOK_add_base_phase_quests();
+	}
+	super(name);
+}
+
+override void ＞ターントップフェイズ登録(string name)
+{
+	if (!_ML_added_extra_missions) {
+		_ML_added_extra_missions = 1;
+		ML_HOOK_add_turn_start_quests();
+	}
+	super(name);
+}
+
+override void ＞ターンエンドフェイズ登録１(string name)
+{
+	if (!_ML_added_extra_missions) {
+		_ML_added_extra_missions = 1;
+		ML_HOOK_add_turn_end_1_quests();
+	}
+	super(name);
+}
+
+override void ＞ターンエンドフェイズ登録２(string name)
+{
+	if (!_ML_added_extra_missions) {
+		_ML_added_extra_missions = 1;
+		ML_HOOK_add_turn_end_2_quests();
+	}
+	super(name);
+}
+
+/*
+ * The functions below should be overridden by mods to insert their custom
+ * quests into the game. After the mod's quests are added, super() should
+ * be called so that other mods can add their own quests.
+ */
+
+void ML_HOOK_add_prep_phase_quests(void)
+{
+	//ML_add_prep_phase_quest("my_prep_phase_quest");
+	//super();
+}
+
+void ML_HOOK_add_operation_phase_quests(void)
+{
+	//ML_add_operation_phase_quest("my_operation_phase_quest");
+	//super();
+}
+
+void ML_HOOK_add_base_phase_quests(void)
+{
+	//ML_add_base_phase_quest("my_base_phase_quest");
+	//super();
+}
+
+void ML_HOOK_add_turn_start_quests(void)
+{
+	//ML_add_turn_start_quest("my_turn_start_quest");
+	//super();
+}
+
+void ML_HOOK_add_turn_end_1_quests(void)
+{
+	//ML_add_turn_end_1_quest("my_turn_end_1_quest");
+	//super();
+}
+
+void ML_HOOK_add_turn_end_2_quests(void)
+{
+	//ML_add_turn_end_2_quest("my_turn_end_2_quest");
+	//super();
+}
+
+/*
+ * These are just convenient aliases for Japanese-named functions.
+ */
+
+void ML_add_prep_phase_quest(string id) { ＞準備フェイズ登録(id); }
+void ML_add_operation_phase_quest(string id) { ＞作戦フェイズ登録(id); }
+void ML_add_base_phase_quest(string id) { ＞拠点フェイズ登録(id); }
+void ML_add_turn_start_quest(string id) { ＞ターントップフェイズ登録(id); }
+void ML_add_turn_end_1_quest(string id) { ＞ターンエンドフェイズ登録１(id); }
+void ML_add_turn_end_2_quest(string id) { ＞ターンエンドフェイズ登録２(id); }
+
+/*
+ * Mods should override this function to check for flags set on map nodes,
+ * and perform their custom behaviors (e.g. giving the player a card). If the
+ * flag matches one of the mod's custom flags, it should return 1; otherwise
+ * it should return super(flag) to allow other mods to check their flags.
+ */
+int ML_HOOK_flag(string flag)
+{
+	//if (flag == "my_flag") {
+	//	ML_give_card("my_card");
+	//	return 1;
+	//}
+	//return super(flag);
+	return 0;
+}
+
+override int フラグ(string flag)
+{
+	if (ML_HOOK_flag(flag))
+		return 0;
+	return super(flag);
+}

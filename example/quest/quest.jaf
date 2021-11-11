@@ -1,0 +1,175 @@
+/*
+ * In order to add our quest to the quest list, we override this hook function
+ * and call ML_add_prep_phase_quest. There are separate hooks for adding
+ * operation and base phase quests. See `src/system/quests.jaf`.
+ */
+override void ML_HOOK_add_prep_phase_quests(void)
+{
+	// NOTE: you generally shouldn't add quests on turn 1
+	if (ML_current_turn() > 1) {
+		ML_add_prep_phase_quest("ExampleQuest");
+	}
+
+	// make sure to call super() after so that other mods can use this hook.
+	super();
+}
+
+/*
+ * This hook allows us to run custom code when the player reaches a map node
+ * with the "フラグ" key set.
+ */
+override int ML_HOOK_flag(string flag)
+{
+	if (flag == "example_quest_give_nunuhara") {
+		ML_give_card("Lv37 ヌヌハラ");
+		return 1;
+	}
+	if (flag == "example_quest_kill_nunuhara") {
+		ML_disable_character("ヌヌハラ");
+		return 1;
+	}
+	// if none of our flags were found, we return super(flag) so that other
+	// mods can check for their flags.
+	return super(flag);
+}
+
+/*
+ * This hook allows us to set up our custom battles. See `src/system/battle.jaf`
+ * for more info.
+ */
+override int ML_HOOK_battle(string id, // コード名
+		int autobattle,        // ▲自動戦闘
+		int attr0,             // ▲属性０
+		int attr1,             // ▲属性１
+		int attr2)             // ▲属性２
+{
+	if (id == "mod_example_quest_battle") {
+		// intitialize battle parameters
+		ML_battle_set_cg_name("m22夜／基本");
+		ML_battle_set_name("光狩");
+		ML_battle_set_bgm("戦闘／ボス");
+		ML_battle_set_capture(野良モンスター捕獲対象());
+		if (tran(2) == 1) {
+			ML_battle_set_auto_capture(1);
+		}
+		ML_battle_set_race(12);
+		//ML_battle_set_grd(2); // default
+		ML_battle_set_evasion(5);
+		//ML_battle_set_def(100); // default
+		//ML_battle_set_atk(100); // default
+		//ML_battle_set_exp(100); // default
+		ML_battle_set_num(80);
+
+		// commit battle parameters
+		int retval = ML_battle_commit(autobattle);
+
+		// set algorithm (predefined enemy action set)
+		ML_battle_set_algorithm("アルゴ／基本２", attr1, attr2);
+
+		// instead of setting a standard algorithm, you can define a custom action
+		// set using the ML_battle_add_action function, e.g.
+		//ML_battle_add_action("", "", attr1, 1002, 0, 0, 0, 0, "", 0);
+		//ML_battle_add_action("", "", attr2, 1063, 0, 0, 0, 0, "", 0);
+		//ML_battle_add_action("", "", attr1, 1002, 1002, 0, 0, 0, "３ラウンド", 0);
+
+		return retval;
+	}
+	// if id didn't match any of our battles, we return super(...) so that
+	// other mods can set up their battles
+	return super(id, autobattle, attr0, attr1, attr2);
+}
+
+/*
+ * Below are our custom ADV events. They are run when the player steps on a map
+ * node with the "物語" key set to the name of one of these functions.
+ * See `src/system/adv.jaf` for a full listing of the functions available for
+ * use in ADV events.
+ */
+
+void example_quest_event001(void)
+{
+	ML_ADV_wp("キャラ", -1, -1);
+	ML_ADV_bg("ランス城", -1, -1);
+
+	ML_ADV_speech("マジック／基本", "", "", "");
+	'「ML_ADV_speech' R;
+	'  looks like this.」' A;
+
+	ML_ADV_speech_E("ワーグ／基本", "");
+	'「ML_ADV_speech_E' R;
+	'  looks like this.」' A;
+
+	ML_ADV_narration();
+	'ML_ADV_narration.' A;
+
+	ML_ADV_narration_E();
+	'ML_ADV_narration_E.' A;
+
+	ML_ADV_speech_with_stand(ML_STAND_CENTER, "ランス／基本", "", "", "");
+	'「ML_ADV_speech_with_stand(ML_STAND_CENTER, ...).」' A;
+
+	ML_ADV_speech_with_stand(ML_STAND_LEFT, "マジック／基本", "", "", "");
+	'「ML_ADV_speech_with_stand(ML_STAND_LEFT, ...).」' A;
+
+	ML_ADV_speech_with_stand(ML_STAND_RIGHT, "マジック／基本", "", "", "");
+	'「ML_ADV_speech_with_stand(ML_STAND_RIGHT, ...).」' A;
+
+	ML_ADV_clear_stand(ML_STAND_BOTH, -1);
+
+	ML_ADV_narration();
+	'Event END.' A;
+}
+
+void example_quest_event002(void)
+{
+	ML_ADV_wp("キャラ", -1, -1);
+	ML_ADV_bg("ランス城", -1, -1);
+
+	ML_ADV_narration();
+	'Multiple choice.' A;
+
+	ML_ADV_push_choice("OPTION 1");
+	ML_ADV_push_choice("OPTION 2");
+	ML_ADV_display_choice();
+	int r = ML_ADV_get_choice();
+
+	ML_ADV_narration();
+	if (r == 1) {
+		'You chose option 1' A;
+	} else if (r == 2) {
+		'You chose option 2' A;
+	} else {
+		'This should not happen' A;
+	}
+}
+
+void example_quest_event003(void)
+{
+	ML_ADV_wp("キャラ", -1, -1);
+	ML_ADV_bg("ランス城", -1, -1);
+
+	ML_ADV_set_stand(ML_STAND_LEFT, "ランス／基本", -1);
+	ML_ADV_shake_stand(ML_STAND_LEFT, 0);
+
+	ML_ADV_speech("ランス／基本", "", "", "");
+	'「...」' A;
+
+	ML_ADV_set_stand(ML_STAND_RIGHT, "マジック／基本", -1);
+	ML_ADV_shake_stand(ML_STAND_RIGHT, 1);
+
+	ML_ADV_speech("マジック／基本", "", "", "");
+	'「...」' A;
+
+	ML_ADV_shake_all(2, 1000);
+
+	ML_ADV_narration();
+	'...' A;
+
+	ML_ADV_screen_flash(600, ML_COLOR_WHITE);
+	ML_ADV_screen_flash(600, ML_COLOR_BLACK);
+	ML_ADV_screen_flash(600, ML_COLOR_BLUE);
+	ML_ADV_screen_flash(600, ML_COLOR_GREEN);
+	ML_ADV_screen_flash(600, ML_COLOR_LIGHT_BLUE);
+	ML_ADV_screen_flash(600, ML_COLOR_PURPLE);
+	ML_ADV_screen_flash(600, ML_COLOR_YELLOW);
+}

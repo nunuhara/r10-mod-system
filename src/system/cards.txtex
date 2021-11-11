@@ -1,0 +1,9 @@
+table カードデータ = {
+	{ indexed string Id, string 識別名, string ＣＧ名, int 所属, int 属性, int 性別, int スキル１, int スキル２, int ＨＰ, int ＡＴＫ, int 種別, string 詳細ＣＧ, int イベント種別, int 大人子供 = 0, int 裸 = 0, int ＳＲ = 0, int 削除 = 0, int 発生 = 0, int 情報時カード表示 = 0, int 割り込みバトル倍率 = 1, int 必殺連撃効果 = 0 },
+	{ "Debug", "Debug", "ケイブワン／全裸", 10, 2, 1, 1000, 0, 30, 30, 0, "", 0, 0, 0, 87, 0, 1, 0, 1, 0 },
+};
+
+table custom_cards = {
+	{ indexed string id, int rank, string char_id, string req, int flag, int gacha, int part },
+	{ "Debug", 0, "", "", 0, 0, 0 },
+};

@@ -1,0 +1,63 @@
+/*
+ * Register custom cards in the global card list.
+ */
+override void Ｔカード一覧(int fg)
+{
+	int col_id = MainEXFile.GetColAtFormatName("custom_cards", "id", 0);
+	int col_part = MainEXFile.GetColAtFormatName("custom_cards", "part", 0);
+
+	int rows = EX_Height("custom_cards", 0);
+	for (int i = 0; i < rows; i++) {
+		int part = EX_A2Int("custom_cards", col_part, i, -1, 0);
+		if (fg == 0 || part == fg) {
+			string id = EX_A2String("custom_cards", col_id, i, "", 0);
+			Tc(id);
+		}
+	}
+
+	super(fg);
+}
+
+/*
+ * Add custom cards to the gacha pool.
+ * This function is called from within Ｔカード箱. See cards.jam.
+ */
+int _ML_add_cards(ref array<string> cards, int nr_cards, int fg)
+{
+	// retrieve column indices
+	int col_id = MainEXFile.GetColAtFormatName("custom_cards", "id", 0);
+	int col_rank = MainEXFile.GetColAtFormatName("custom_cards", "rank", 0);
+	int col_char_id = MainEXFile.GetColAtFormatName("custom_cards", "char_id", 0);
+	int col_req = MainEXFile.GetColAtFormatName("custom_cards", "req", 0);
+	int col_flag = MainEXFile.GetColAtFormatName("custom_cards", "flag", 0);
+	int col_gacha = MainEXFile.GetColAtFormatName("custom_cards", "gacha", 0);
+	int col_part = MainEXFile.GetColAtFormatName("custom_cards", "part", 0);
+
+	int rows = EX_Height("custom_cards", 0);
+	for (int i = 0; i < rows; i++) {
+		// Check if card is eligible for gacha
+		if (!EX_A2Int("custom_cards", col_gacha, i, 0, 0))
+			continue;
+		// Check if card is eligible for current chapter
+		if (tt[0] == 2 && EX_A2Int("custom_cards", col_part, i, -1, 0) != 2)
+			continue;
+
+		// retrieve column values
+		string id = EX_A2String("custom_cards", col_id, i, "", 0);
+		int rank = EX_A2Int("custom_cards", col_rank, i, 0, 0);
+		string char_id = EX_A2String("custom_cards", col_char_id, i, "", 0);
+		string req = EX_A2String("custom_cards", col_req, i, "", 0);
+		int flag = EX_A2Int("custom_cards", col_flag, i, 0, 0);
+
+		// TODO: emulate gacha function behavior for increasing probability
+		//       based on mission/faction match
+
+		// add card to gacha pool (maybe)
+		if (ＴＡ７(rank, fg, id, char_id, req, flag) == 1) {
+			nr_cards++;
+			cards[nr_cards] = id;
+		}
+	}
+
+	return nr_cards;
+}

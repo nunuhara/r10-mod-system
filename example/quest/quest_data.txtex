@@ -1,0 +1,197 @@
+// This is the table in which all quests are listed.
+table クエスト情報 = {
+	{ indexed int Id,
+	  string 識別名,
+	  int 種別,
+	  string クエスト名,
+	  string 説明１,
+	  string 説明２,
+	  string 説明３,
+	  string 説明４,
+	  int 地域 = 0,
+	  int リザルト有無 = 0,
+	  int 有利所属 = 0,
+	  int 有利属性１ = 0,
+	  int 有利属性２ = 0,
+	  string 選択画像 = "",
+	  int クエストアウト可能 = 0
+	},
+	{ 1000, "ExampleQuest", 10, "Example Quest", "This is an example quest", "", "", "", 0, 0, 0, 0, 0, "", 0 },
+};
+
+// This object stores the data for each node on a map.
+tree クエストデータ = {
+	ExampleQuest = {
+		背景 = "リーザス平原",                          // background
+		地名 = "リーザス",                              // area name
+		音楽 = "フィールド／リーザス",                  // music
+		// Each node on the map should have an entry here.
+		// The numbers should match the "番号" key from the マップデータ
+		// tree below. They MUST be written in full-width characters,
+		// like these: ０１２３４５６７８９ (not 0123456789).
+		００１ = {
+			画像Ａ = "街道１",                      // tile name (.flat)
+			画像Ｂ = "イベント印",                  // event icon (.flat)
+			物語 = "example_quest_event001",        // event function
+			選択分岐 = {
+				分岐左 = {                      // left (up) path
+					顔画像 = "立て看板",    // icon name
+					説明 = "Run",           // button text
+				},
+				分岐右 = {                      // right (down) path
+					顔画像 = "ランス",      // icon name
+					説明 = "Fight",         // button text
+				},
+			},
+		},
+		０２０ = {
+			画像Ａ = "街道１",                      // tile name (.flat)
+			画像Ｂ = "中ボス魔軍印",                // enemy icon (.flat)
+			戦闘 = "mod_example_quest_battle",      // battle name
+		},
+		０３０ = {
+			画像Ａ = "街道１",                      // tile name (.flat)
+			画像Ｂ = "レア宝箱印",                  // chest icon (.flat)
+			処理 = "宝箱／レア",                    // open a rare chest when this tile is reached
+		},
+		０４０ = {
+			画像Ａ = "街道１",                      // tile name (.flat)
+			画像Ｂ = "その頃印",                    // event icon (.flat)
+			物語 = "example_quest_event002",        // event function
+		},
+		０５０ = {
+			画像Ａ = "街道１",                      // tile name (.flat)
+			画像Ｂ = "イベント印",                  // event icon (.flat)
+			物語 = "example_quest_event003",        // event function
+			終了 = 1,                               // quest ends here
+		},
+		０６０ = {
+			画像Ａ = "街道１",                      // tile name (.flat)
+			画像Ｂ = "",                            // empty tile, no icon
+			フラグ = "example_quest_give_nunuhara", // custom flag
+		},
+	},
+};
+
+// This object stores the map layout.
+// The "種別" key can have the following values:
+//     * "箱"      - a node
+//     * "道（─）" - a straight path
+//     * "道（┌）" - an up-right corner path
+//     * "道（└）" - a down-right corner path
+//     * "道（┘）" - a right-up corner path
+//     * "道（┐）" - a right-down corner path
+// Where "right" is towards the top-right of the screen, and "up" is towards
+// the top-left of the screen (because maps are isometric).
+tree マップデータ = {
+	// The map name should match the quest name
+	ExampleQuest = {
+		// size of the map
+		サイズ = (list) { 25, 30 },
+		// list of (non-empty) map tiles
+		データ = {
+			０００１ = {
+				マップ位置 = (list) { 12, 15 },
+				種別 = "箱",
+				番号 = 1,
+			},
+			０００２ = {
+				マップ位置 = (list) { 13, 16 },
+				種別 = "道（─）",
+			},
+			０００３ = {
+				マップ位置 = (list) { 14, 16 },
+				種別 = "道（─）",
+			},
+			０００４ = {
+				マップ位置 = (list) { 15, 16 },
+				種別 = "箱",
+				番号 = 20,
+			},
+			０００５ = {
+				マップ位置 = (list) { 16, 16 },
+				種別 = "道（─）",
+			},
+			０００６ = {
+				マップ位置 = (list) { 17, 16 },
+				種別 = "道（─）",
+			},
+			０００７ = {
+				マップ位置 = (list) { 18, 15 },
+				種別 = "箱",
+				番号 = 30,
+			},
+			０００８ = {
+				マップ位置 = (list) { 19, 15 },
+				種別 = "道（─）",
+			},
+			０００９ = {
+				マップ位置 = (list) { 20, 15 },
+				種別 = "道（─）",
+			},
+			００１０ = {
+				マップ位置 = (list) { 21, 15 },
+				種別 = "箱",
+				番号 = 40,
+			},
+			００１１ = {
+				マップ位置 = (list) { 22, 15 },
+				種別 = "道（─）",
+			},
+			００１２ = {
+				マップ位置 = (list) { 23, 15 },
+				種別 = "道（─）",
+			},
+			００１３ = {
+				マップ位置 = (list) { 24, 15 },
+				種別 = "箱",
+				番号 = 50,
+			},
+			"0014" = {
+				マップ位置 = (list) { 12, 16 },
+				種別 = "道（└）",
+			},
+			"0015" = {
+				マップ位置 = (list) { 18, 16 },
+				種別 = "道（┘）",
+			},
+			"0016" = {
+				マップ位置 = (list) { 12, 14 },
+				種別 = "道（┌）",
+			},
+			"0017" = {
+				マップ位置 = (list) { 13, 14 },
+				種別 = "道（─）",
+			},
+			"0018" = {
+				マップ位置 = (list) { 14, 14 },
+				種別 = "道（─）",
+			},
+			"0019" = {
+				マップ位置 = (list) { 15, 14 },
+				種別 = "道（箱）",
+				番号 = 60,
+			},
+			"0020" = {
+				マップ位置 = (list) { 16, 14 },
+				種別 = "道（─）",
+			},
+			"0021" = {
+				マップ位置 = (list) { 17, 14 },
+				種別 = "道（─）",
+			},
+			"0022" = {
+				マップ位置 = (list) { 18, 14 },
+				種別 = "道（┐）",
+			},
+		},
+	},
+};
+
+// This object stores map decorations
+tree 障害物データ = {
+	ExampleQuest = {
+		データ = {
+		},
+	},
+};

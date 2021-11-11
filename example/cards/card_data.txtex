@@ -1,0 +1,79 @@
+// This file defines custom cards. 
+
+// This is the table where all cards are listed.
+// We add an entry for our custom card.
+table カードデータ = {
+	{ indexed string Id, // the card's name and identifier
+	  string 識別名,     // the character's identifier (used for variant cards which require a base card)
+	  string ＣＧ名,     // the name of the CG to use for the card (minus the "カード／" prefix)
+	  int 所属,          // faction the card belongs to
+	  int 属性,          // attribute (fire, ice, etc.)
+	  int 性別,          // gender (1 = male, 2 = female)
+	  int スキル１,      // ID of the first skill (see the スキルデータ table below)
+	  int スキル２,      // ID of the first skill (see the スキルデータ table below)
+	  int ＨＰ,          // base HP
+	  int ＡＴＫ,        // base ATK
+	  int 種別,
+	  string 詳細ＣＧ,   // CG to use for details page (when you first get the card)
+	  int イベント種別,
+	  int 大人子供 = 0,  // adult or child (0 = adult, 1 = child)
+	  int 裸 = 0,        // nude (0 = normal, 2 = nude)
+	  int ＳＲ = 0,
+	  int 削除 = 0,
+	  int 発生 = 0,
+	  int 情報時カード表示 = 0,
+	  int 割り込みバトル倍率 = 1,
+	  int 必殺連撃効果 = 0
+	},
+	{ "三輪坂真言美", "真言美", "manami", 7, 0, 1, 2500, 2501, 50, 42, 0, "立ち／ランス／基本", 0, 0, 0, 87, 0, 1, 0, 2, 0 },
+	{ "真言美（女優）", "真言美", "manami_actress", 7, 0, 1, 2500, 2501, 50, 42, 0, "立ち／ランス／基本", 0, 0, 0, 87, 0, 1, 0, 2, 0 },
+	{ "全裸 真言美", "真言美", "manami_nude", 7, 0, 1, 2500, 2501, 50, 42, 0, "立ち／ランス／基本", 0, 0, 0, 87, 0, 1, 0, 2, 0 },
+};
+
+// This is the table where all skills are listed.
+// The custom skills for our card are added here.
+table スキルデータ = {
+	{ indexed int Id,    // skill ID (see the カードデータ table above)
+	  string 名前,       // name of the skill
+	  int 行動タイプ,
+	  int 処理,
+	  string フラット名, // name of the .flat effect to display (can be "" for default)
+	  int ＡＰ,          // AP cost
+	  int 確率,
+	  int 効果１,        // effect 1
+	  int 数値１,        // value 1
+	  int 効果２,        // effect 2
+	  int 数値２,        // value 2
+	  int 効果３,        // effect 3
+	  int 数値３,        // value 3
+	  string 発動条件,
+	  int 大技,
+	  int ＡＰ種別,      // does AP cost increase (1 = yes, 0 = no)
+	  string 説明        // skill description (NOTE: lowercase 'r' is treated as a newline)
+	},
+	{ 2500, "真言美ビーム",     1,  4, "支援排除",         1,  100, 1, 50,  61,  1, 6, 3, "", 0, 0, "魔法(0.5倍)r　敵支援を１排除" },
+	{ 2501, "ドキドキレーザー", 1,  4, "魔法／雷魔法攻撃", 2,  100, 1, 200, 34, 60, 6, 3, "", 0, 0, "魔法(2倍)r　▼感電 60%" },
+};
+
+// This table lists only custom cards added by mods.
+// By adding an entry here, our card is automatically added to the gacha,
+// without us having to write any code.
+table custom_cards = {
+	{ indexed string id, // the card ID; see the カードデータ table above
+	  int rank,          // 0=common, 10=rare, 20=ultra-rare; use 9/19 for variant cards, and 4/14 for scripted drops
+	  string char_id,    // for variant cards; put the character name here to ensure that the base card is obtained first
+	  string req,        // if there is a level requirement for a variant card to drop ("★２０", "★４０", "★８０")
+	  int flag,          // typically 0; 1 if the card shouldn't drop before turn 11; 2 for nude cards
+	  int gacha,         // 1 if the card should be automatically added to the gacha, else 0
+	  int part           // 1 for part 1, 2 for part 2
+	},
+	// The base card
+	{ "三輪坂真言美", 10, "", "", 0, 1, 1 },
+	// Variant: in order to obtain this card, the player must already have a "真言美" card
+	// at star level 20.
+	// Because we used rank=19 here, this card won't drop as a duplicate
+	{ "真言美（女優）", 19, "真言美", "★２０", 0, 1, 1 },
+	// For the nude card, we require star level 40 and set the "flag" value to 2
+	// (flag=2 marks the card as nude for the purposes of the nude Rance passive ability)
+	{ "全裸 真言美", 19, "真言美", "★４０", 2, 1, 1 },
+};

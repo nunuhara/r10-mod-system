@@ -1,0 +1,199 @@
+int _ML_battle(string id, int autobattle, int attr0, int attr1, int attr2)
+{
+	_ML_battle_init();
+	return ML_HOOK_battle(id, autobattle, attr0, attr1, attr2);
+}
+
+/*
+ * This function is used to add a mod's custom battles.
+ * It is called from within Ｔ敵本体生成 (defined in battle.jam).
+ */
+int ML_HOOK_battle(string id,   // コード名
+		int autobattle, // ▲自動戦闘
+		int attr0,      // ▲属性０
+		int attr1,      // ▲属性１
+		int attr2)      // ▲属性２
+{
+	// NOTE: mods should override this function and check if `id` matches one of their
+	//       battles. If not, then super() should be called so that other mods get a
+	//       chance to check for their own battles.
+
+	// NOTE: Battles added by mods _MUST_ have an id that begins with "mod_", as in the
+	//       example below, otherwise this function will not be called in the first place.
+
+	/*
+	if (id == "mod_ML_example_battle") {
+		// intitialize battle parameters
+		ML_battle_set_cg_name("m22夜／基本");
+		ML_battle_set_name("光狩");
+		ML_battle_set_bgm("戦闘／ボス");
+		ML_battle_set_capture(野良モンスター捕獲対象());
+		if (tran(2) == 1) {
+			ML_battle_set_auto_capture(1);
+		}
+		ML_battle_set_race(12);
+		//ML_battle_set_grd(2); // default
+		ML_battle_set_evasion(5);
+		//ML_battle_set_def(100); // default
+		//ML_battle_set_atk(100); // default
+		//ML_battle_set_exp(100); // default
+		ML_battle_set_num(80);
+
+		// commit battle parameters
+		int retval = ML_battle_commit(autobattle);
+
+		// set algorithm
+		Ｔアルゴリズム("アルゴ／基本２", attr1, attr2);
+
+		return retval;
+	}
+	return super(id, autobattle, attr0, attr1, attr2);
+	*/
+	ML_WARNING("No battle found for '%s'" % id);
+	return 0;
+}
+
+string _ML_battle_cg_name;
+string _ML_battle_name;
+string _ML_battle_bgm;
+int _ML_battle_boss;
+int _ML_battle_num;
+
+int _ML_battle_def;
+int _ML_battle_atk;
+int _ML_battle_exp;
+int _ML_battle_grd;
+int _ML_battle_special_route;
+int _ML_battle_race;
+string _ML_battle_capture;
+string _ML_battle_stealing;
+int _ML_battle_scale;
+int _ML_battle_turn_limit;
+int _ML_battle_timeout_fail;
+int _ML_battle_defeated_fail;
+int _ML_battle_phys_res;
+int _ML_battle_magic_res;
+int _ML_battle_cond_res;
+int _ML_battle_evasion;
+int _ML_battle_auto_capture;
+
+void _ML_battle_init(void)
+{
+	_ML_battle_cg_name = "";
+	_ML_battle_name = "";
+	_ML_battle_bgm = "";
+	_ML_battle_boss = 0;
+	_ML_battle_num = 1;
+
+	_ML_battle_def = 100;
+	_ML_battle_atk = 100;
+	_ML_battle_exp = 100;
+	_ML_battle_grd = 2;
+	_ML_battle_special_route = 0;
+	_ML_battle_race = 0;
+	_ML_battle_capture = "";
+	_ML_battle_stealing = "";
+	_ML_battle_scale = 1;
+	_ML_battle_turn_limit = 10;
+	_ML_battle_timeout_fail = 0;
+	_ML_battle_defeated_fail = 1;
+	_ML_battle_phys_res = 0;
+	_ML_battle_magic_res = 0;
+	_ML_battle_cond_res = 0;
+	_ML_battle_evasion = 0;
+	_ML_battle_auto_capture = 0;
+}
+
+void ML_battle_set_cg_name(string cg_name) { _ML_battle_cg_name = cg_name; }
+void ML_battle_set_name(string name)       { _ML_battle_name = name; }
+void ML_battle_set_bgm(string bgm)         { _ML_battle_bgm = bgm; }
+void ML_battle_set_boss(int boss)          { _ML_battle_boss = boss; }
+void ML_battle_set_num(int num)            { _ML_battle_num = num; }
+void ML_battle_set_def(int def)            { _ML_battle_def = def; }
+void ML_battle_set_atk(int atk)            { _ML_battle_atk = atk; }
+void ML_battle_set_exp(int exp)            { _ML_battle_exp = exp; }
+void ML_battle_set_grd(int grd)            { _ML_battle_grd = grd; }
+void ML_battle_set_special_route(int sr)   { _ML_battle_special_route = sr; }
+void ML_battle_set_race(int race)          { _ML_battle_race = race; }
+void ML_battle_set_capture(string capture) { _ML_battle_capture = capture; }
+void ML_battle_set_stealing(string steal)  { _ML_battle_stealing = steal; }
+void ML_battle_set_scale(int scale)        { _ML_battle_scale = scale; }
+void ML_battle_set_turn_limit(int limit)   { _ML_battle_turn_limit = limit; }
+void ML_battle_set_timeout_fail(int fail)  { _ML_battle_timeout_fail = fail; }
+void ML_battle_set_defeated_fail(int fail) { _ML_battle_defeated_fail = fail; }
+void ML_battle_set_physical_res(int res)   { _ML_battle_phys_res = res; }
+void ML_battle_set_magic_res(int res)      { _ML_battle_magic_res = res; }
+void ML_battle_set_condition_res(int res)  { _ML_battle_cond_res = res; }
+void ML_battle_set_evasion(int evasion)    { _ML_battle_evasion = evasion; }
+void ML_battle_set_auto_capture(int cap)   { _ML_battle_auto_capture = cap; }
+
+int ML_battle_commit(int autobattle)
+{
+	if (_ML_battle_cg_name == "") {
+		ML_WARNING("No CG name specified for battle");
+		_ML_battle_cg_name = "m33迷宮／基本";
+	}
+	if (_ML_battle_name == "") {
+		ML_WARNING("No name specified for battle");
+		_ML_battle_name = "魔物の大群";
+	}
+
+	難易度調整(_ML_battle_def, _ML_battle_atk, _ML_battle_exp, autobattle, _ML_battle_boss,
+			_ML_battle_name, _ML_battle_num);
+	int retval = Ｔ敵本(_ML_battle_name, _ML_battle_cg_name, _ML_battle_grd, _ML_battle_def,
+		_ML_battle_atk, _ML_battle_special_route, _ML_battle_race, _ML_battle_capture,
+		_ML_battle_stealing, _ML_battle_scale, _ML_battle_boss, _ML_battle_exp,
+		_ML_battle_turn_limit, _ML_battle_timeout_fail, _ML_battle_defeated_fail,
+		_ML_battle_bgm, _ML_battle_phys_res, _ML_battle_magic_res, _ML_battle_cond_res,
+		_ML_battle_evasion, _ML_battle_auto_capture);
+	_ML_battle_init();
+	return retval;
+}
+
+/*
+ * Set the enemy behavior to a preset algorithm. Valid algorithm names are:
+ *     "アルゴ／魔軍１"
+ *     "アルゴ／魔軍１魔法"
+ *     "アルゴ／魔軍３"
+ *     "アルゴ／魔軍２"
+ *     "アルゴ／魔軍２軍師"
+ *     "アルゴ／魔軍２攻撃"
+ *     "アルゴ／魔軍２魔法"
+ *     "アルゴ／魔軍突撃"
+ *     "アルゴ／魔軍防壁"
+ *     "アルゴ／魔軍飛行"
+ *     "アルゴ／魔軍将軍"
+ *     "アルゴ／基本１"
+ *     "アルゴ／未定"
+ *     "アルゴ／基本２"
+ *     "アルゴ／基本２回復"
+ *     "アルゴ／基本２攻撃"
+ *     "アルゴ／基本２大技"
+ *     "アルゴ／基本２魔法"
+ *     "アルゴ／基本３"
+ *     "アルゴ／突撃１"
+ *     "アルゴ／突撃２"
+ *     "アルゴ／遠距離１"
+ *     "アルゴ／遠距離２"
+ *     "アルゴ／魔法１"
+ *     "アルゴ／魔法２"
+ *     "アルゴ／異常"
+ */
+void ML_battle_set_algorithm(string name, int attr1, int attr2)
+{
+	Ｔアルゴリズム(name, attr1, attr2);
+}
+
+/*
+ * Add an action to the enemy's move set.
+ * E.g. to add a basic attack,
+ *     ML_battle_add_action("", "", attr1, 1002, 0, 0, 0, 0, "", 0);
+ * Valid skill IDs can be found in the スキルデータ table in Rance10EX.ex
+ */
+void ML_battle_add_action(string icon_name, string caption, int weak_point, int skill1,
+		int skill2, int skill3, int skill4, int skill5, string trigger_condition,
+		int is_once)
+{
+	Ｐ敵行動セット追加(icon_name, caption, weak_point, skill1, skill2, skill3, skill4,
+			skill5, trigger_condition, is_once);
+}

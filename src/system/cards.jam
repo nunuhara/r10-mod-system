@@ -1,0 +1,9 @@
+; inject!Ｔカード箱!0xE8
+	PUSHLOCALPAGE
+	PUSH 8
+	.LOCALREF カードＢＯＸ
+	.LOCALREF aa
+	.LOCALREF fg
+	CALLFUNC _ML_add_cards
+	ASSIGN
+	POP

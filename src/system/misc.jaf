@@ -1,0 +1,19 @@
+void ML_WARNING(string message)
+{
+	system.MsgBox("WARNING: %s" % message);
+}
+
+int ML_current_turn(void)
+{
+	return ◆ターン(-1);
+}
+
+void ML_give_card(string name)
+{
+	Ｔ味方カード生成(name);
+}
+
+void ML_disable_character(string name)
+{
+	Ｐ禁止キャラＯＮ(name);
+}

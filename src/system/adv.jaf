@@ -1,0 +1,324 @@
+/*
+ * Stand positions
+ */
+const int ML_STAND_LEFT        = 0;
+const int ML_STAND_RIGHT       = 1;
+const int ML_STAND_CENTER      = 2;
+const int ML_STAND_BACK_CENTER = 3;
+const int ML_STAND_BOTH        = 4;
+const int ML_STAND_ALL_BACK    = 5;
+const int ML_STAND_ALL         = 6;
+
+/*
+ * Shake levels
+ */
+const int ML_SHAKE_SMALL  = 0;
+const int ML_SHAKE_MEDIUM = 1;
+const int ML_SHAKE_LARGE  = 2;
+
+/*
+ * Colors
+ */
+const int ML_COLOR_WHITE      = 0;
+const int ML_COLOR_BLACK      = 1;
+const int ML_COLOR_BLUE       = 2;
+const int ML_COLOR_GREEN      = 3;
+const int ML_COLOR_LIGHT_BLUE = 4;
+const int ML_COLOR_RED        = 5;
+const int ML_COLOR_PURPLE     = 6;
+const int ML_COLOR_YELLOW     = 7;
+
+/*
+ * Sets the wallpaper CG.
+ */
+void ML_ADV_wp(string cg_name, int effect_type, int effect_time)
+{
+	■壁紙(cg_name, effect_type, effect_time);
+}
+
+/*
+ * Sets the "background" CG (the window in the center of the screen).
+ */
+void ML_ADV_bg(string cg_name, int effect_type, int effect_time)
+{
+	■背景(cg_name, effect_type, effect_time);
+}
+
+/*
+ * Displays the narration text frame/
+ */
+void ML_ADV_narration(void)
+{
+	●ト書き();
+}
+
+/*
+ * Like ML_ADV_narration but without the background.
+ */
+void ML_ADV_narration_E(void)
+{
+	●ト書きＥ();
+}
+
+/*
+ * Displays the speech text frame for a given character.
+ * Only `stand_cg` is required, the other arguments can be "".
+ */
+void ML_ADV_speech(string stand_cg, string name, string face_cg, string job_name)
+{
+	●台詞Ａ(stand_cg, name, face_cg, job_name);
+}
+
+/*
+ * Like ML_ADV_speech, but without the portrait.
+ */
+void ML_ADV_speech_E(string cg_name, string name)
+{
+	●台詞Ｅ(cg_name, name);
+}
+
+/*
+ * Displays the thought text frame for a given character.
+ * Only `stand_cg` is required, the other arguments can be "".
+ */
+void ML_ADV_thought(string stand_cg, string name, string face_cg, string job_name)
+{
+	●思考Ａ(stand_cg, name, face_cg, job_name);
+}
+
+/*
+ * Like ML_ADV_thought, but without the portrait.
+ */
+void ML_ADV_thought_E(string cg_name, string name)
+{
+	●思考Ｅ(cg_name, name);
+}
+
+/*
+ * Like ML_ADV_speech, but additionally displays a stand CG.
+ */
+void ML_ADV_speech_with_stand(int stand, string stand_cg, string name, string face_cg, string job_name)
+{
+	if (stand == ML_STAND_LEFT)
+		●左台詞Ｂ(stand_cg, name, face_cg, job_name);
+	else if (stand == ML_STAND_RIGHT)
+		●右台詞Ｂ(stand_cg, name, face_cg, job_name);
+	else if (stand == ML_STAND_CENTER)
+		●中台詞Ｂ(stand_cg, name, face_cg, job_name);
+	else if (stand == ML_STAND_BACK_CENTER)
+		●中後ろ台詞Ｂ(stand_cg, name, face_cg, job_name);
+	else
+		ML_WARNING("ML_ADV_speech_with_stand: invalid stand index: %d" % stand);
+}
+
+/*
+ * Like ML_ADV_thought, but additionally displays a stand CG.
+ */
+void ML_ADV_thought_with_stand(int stand, string stand_cg, string name, string face_cg, string job_name)
+{
+	if (stand == ML_STAND_LEFT)
+		●左思考Ｂ(stand_cg, name, face_cg, job_name);
+	else if (stand == ML_STAND_RIGHT)
+		●右思考Ｂ(stand_cg, name, face_cg, job_name);
+	else if (stand == ML_STAND_CENTER)
+		●中思考Ｂ(stand_cg, name, face_cg, job_name);
+	else if (stand == ML_STAND_BACK_CENTER)
+		●中後ろ思考Ｂ(stand_cg, name, face_cg, job_name);
+	else
+		ML_WARNING("ML_ADV_thought_with_stand: invalid stand index: %d" % stand);
+
+}
+
+/*
+ * Displays a stand CG.
+ */
+void ML_ADV_set_stand(int stand, string cg_name, int effect_type)
+{
+	if (stand == ML_STAND_LEFT)
+		■左立ち絵(cg_name, effect_type);
+	else if (stand == ML_STAND_RIGHT)
+		■右立ち絵(cg_name, effect_type);
+	else if (stand == ML_STAND_CENTER)
+		■中立ち絵(cg_name, effect_type);
+	else if (stand == ML_STAND_BACK_CENTER)
+		■中後ろ立ち絵(cg_name, effect_type);
+	// NOTE: these don't normally make sense to use
+	else if (stand == ML_STAND_BOTH)
+		■両立ち絵(cg_name, cg_name, effect_type);
+	else if (stand == ML_STAND_ALL_BACK)
+		■全後ろ立ち絵(cg_name, cg_name, cg_name, effect_type);
+	else if (stand == ML_STAND_ALL)
+		■全立ち絵(cg_name, cg_name, cg_name, effect_type);
+	else
+		ML_WARNING("ML_ADV_set_stand: Invalid stand index: %d" % stand);
+}
+
+/*
+ * Sets both the left and right stand CGs.
+ */
+void ML_ADV_set_both_stands(string cg_name_left, string cg_name_right, int effect_type)
+{
+	■両立ち絵(cg_name_left, cg_name_right, effect_type);
+}
+
+/*
+ * Sets the left, right and back-center stand CGs.
+ */
+void ML_ADV_set_all_back_stands(string cg_name_left, string cg_name_center, string cg_name_right, int effect_type)
+{
+	■全後ろ立ち絵(cg_name_left, cg_name_center, cg_name_right, effect_type);
+}
+
+/*
+ * Sets the left, right and center stand CGs.
+ */
+void ML_ADV_set_all_stands(string cg_name_left, string cg_name_center, string cg_name_right, int effect_type)
+{
+	■全立ち絵(cg_name_left, cg_name_center, cg_name_right, effect_type);
+}
+
+/*
+ * Clears one or more stand CGs.
+ */
+void ML_ADV_clear_stand(int stand, int effect_type)
+{
+	if (stand == ML_STAND_LEFT)
+		■左立ち絵消し(effect_type);
+	else if (stand == ML_STAND_RIGHT)
+		■右立ち絵消し(effect_type);
+	else if (stand == ML_STAND_CENTER)
+		■中立ち絵消し(effect_type);
+	else if (stand == ML_STAND_BACK_CENTER)
+		■中後ろ立ち絵消し(effect_type);
+	else if (stand == ML_STAND_BOTH)
+		■両立ち絵消し(effect_type);
+	else if (stand == ML_STAND_ALL_BACK)
+		■全後ろ立ち絵消し(effect_type);
+	else if (stand == ML_STAND_ALL)
+		■全立ち絵消し(effect_type);
+	else
+		ML_WARNING("ML_ADV_clear_stand: Invalid stand index: %d" % stand);
+}
+
+/*
+ * Shakes a stand CG.
+ */
+void ML_ADV_shake_stand(int stand, int level)
+{
+	if (stand >= 0 && stand < ML_STAND_BOTH) {
+		ShakeStand(stand, level);
+	} else if (stand == ML_STAND_BOTH) {
+		ShakeStand(ML_STAND_LEFT, level);
+		ShakeStand(ML_STAND_RIGHT, level);
+	} else if (stand == ML_STAND_ALL_BACK) {
+		ShakeStand(ML_STAND_LEFT, level);
+		ShakeStand(ML_STAND_RIGHT, level);
+		ShakeStand(ML_STAND_BACK_CENTER, level);
+	} else if (stand == ML_STAND_ALL) {
+		ShakeStand(ML_STAND_LEFT, level);
+		ShakeStand(ML_STAND_RIGHT, level);
+		ShakeStand(ML_STAND_CENTER, level);
+	} else {
+		ML_WARNING("ML_ADV_clear_stand: Invalid stand index: %d" % stand);
+	}
+}
+
+/*
+ * Shake the screen.
+ */
+void ML_ADV_shake_all(int level, int time)
+{
+	shakeAll(level, time);
+}
+
+/*
+ * Display a flash of color on the screen.
+ */
+void ML_ADV_screen_flash(int effect_time, int color)
+{
+	string c;
+	if (color == ML_COLOR_WHITE)
+		c = "";
+	else if (color == ML_COLOR_BLACK)
+		c = "黒";
+	else if (color == ML_COLOR_BLUE)
+		c = "青";
+	else if (color == ML_COLOR_GREEN)
+		c = "緑";
+	else if (color == ML_COLOR_LIGHT_BLUE)
+		c = "水";
+	else if (color == ML_COLOR_RED)
+		c = "赤";
+	else if (color == ML_COLOR_PURPLE)
+		c = "紫";
+	else if (color == ML_COLOR_YELLOW)
+		c = "黄";
+
+	■画面フラッシュ(effect_time, c);
+}
+
+/*
+ * Push an option for a multiple-choice selection.
+ */
+void ML_ADV_push_choice(string caption)
+{
+	■選択肢(caption);
+}
+
+/*
+ * Display the multiple-choice selection.
+ */
+void ML_ADV_display_choice(void)
+{
+	■選択肢実行();
+}
+
+/*
+ * Get the result of the last multiple-choice selection.
+ */
+int ML_ADV_get_choice(void)
+{
+	return ■選択肢結果();
+}
+
+/*
+ * Begin playing music.
+ * `effect_time` is typically -1.
+ */
+void ML_ADV_music_play(string music_name, int effect_time)
+{
+	■音楽(music_name, -1, effect_time);
+}
+
+/*
+ * Play a sound effect.
+ */
+void ML_ADV_sound_play(string sound_name)
+{
+	■効果音(sound_name);
+}
+
+/*
+ * Play a looped sound effect.
+ */
+void ML_ADV_loop_sound(string sound_name, int time, int channel)
+{
+	■ループ効果音(sound_name, time, channel);
+}
+
+/*
+ * Stop a looped sound effect.
+ * `channel` is typically 1.
+ */
+void ML_ADV_loop_sound_stop(int time, int channel)
+{
+	■ループ効果音停止(time, channel);
+}
+
+/*
+ * Stop playing music.
+ */
+void ML_ADV_music_stop(int time)
+{
+	音楽_停止(time);
+}

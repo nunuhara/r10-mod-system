@@ -1,0 +1,17 @@
+ProjectName = "Rance10"
+
+SourceDir = "src"
+OutputDir = ".."
+
+Source = {
+    "source.inc",
+}
+
+ModAin  = "src.ain"
+ExInput = "../Rance10EX.ex"
+
+CodeName  = "Rance10.ain"
+ExModName = "Rance10ModEX.ex"
+CgName    = "Rance10ModCG.afa"
+SoundName = "Rance10ModSound.afa"
+FlatName  = "Rance10ModFlat.afa"
