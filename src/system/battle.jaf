@@ -194,6 +194,217 @@ void ML_battle_add_action(string icon_name, string caption, int weak_point, int 
 		int skill2, int skill3, int skill4, int skill5, string trigger_condition,
 		int is_once)
 {
+	if (trigger_condition != "") {
+		trigger_condition = _ML_convert_battle_condition(trigger_condition);
+		//ML_LOG("condition: '%s'" % trigger_condition);
+	}
+
 	Ｐ敵行動セット追加(icon_name, caption, weak_point, skill1, skill2, skill3, skill4,
 			skill5, trigger_condition, is_once);
+}
+
+/*
+ * # Battle Condition DSL
+ *
+ * <expression>
+ * <expression> "&&" <expression> ...
+ * <expression> "||" <expression> ...
+ *
+ * ## <expression>
+ * <count-expression>
+ * <arg-expression>
+ * "boss"
+ * "not boss"
+ * "damaged"
+ * "undamaged"
+ * "random"
+ *
+ * ### <count-expression>
+ * <count-type> <comparator> <number>
+ *
+ * #### <count-type>
+ * "round"
+ * "aegis count"
+ * "condition count"
+ * "combo"
+ * "enemy action count"
+ * "ap"
+ * "leader count"
+ * "naked count"
+ * "last hp digit"
+ * "hp"
+ *
+ * #### <comparator>
+ * "<="
+ * ">="
+ * "="
+ *
+ * ### <arg-expression>
+ * ["!"] <arg-type> ":" <arg>
+ *
+ * #### <arg-type>
+ * "leader"
+ * "organization"
+ * "aegis"
+ * "condition"
+ * "skill"
+ * "action type"
+ * "tada flag"
+ *
+ * #### <arg>
+ * (Depends on arg-type)
+ *
+ * ## Examples
+ * "round = 3"
+ * "ap >= 4"
+ * "leader:ランス"
+ * "!leader:ランス"
+ * "leader:ランス && round >= 10"
+ */
+
+string _ML_convert_battle_condition(string condition)
+{
+	string r = "";
+	condition = condition.Replace(" ", "");
+	array<string> expressions = condition.Split("&|", 0);
+
+	// NOTE: you can't mix && and ||
+	int is_and = condition.Contains("&");
+	for (int i = 0; i < expressions.Numof(); i++) {
+		if (i > 0) {
+			r = r + (is_and ? " && " : " || ");
+		}
+		r = r + _ML_convert_battle_condition_expression(expressions[i]);
+	}
+	return r;
+}
+
+string _ML_convert_battle_condition_expression(string expr)
+{
+	expr = expr.ToLower();
+	array<string> tokens = expr.Split(":", 0);
+
+	if (tokens.Numof() == 2) {
+		string suffix = "";
+		if (tokens[0].StartsWith("!")) {
+			suffix = "なし";
+			tokens[0] = tokens[0].GetPart(1);
+		}
+		if (tokens[0] == "leader") {
+			return "キャラ" + suffix + "＜" + tokens[1] + "＞";
+		}
+		if (tokens[0] == "organization") {
+			return "陣営" + suffix + "＜" + tokens[1] + "＞";
+		}
+		if (tokens[0] == "aegis") {
+			return "支援" + suffix + "＜" + tokens[1] + "＞";
+		}
+		if (tokens[0] == "condition") {
+			return "異常" + suffix + "＜" + tokens[1] + "＞";
+		}
+		if (tokens[0] == "skill") {
+			return "スキル" + suffix + "＜" + tokens[1] + "＞";
+		}
+		if (tokens[0] == "actiontype") {
+			return "処理" + suffix + "＜" + tokens[1] + "＞";
+		}
+		if (tokens[0] == "tadaflag") {
+			return "条件" + suffix + "＜" + tokens[1] + "＞";
+		}
+	}
+
+	if (tokens.Numof() != 1) {
+		ML_WARNING("Invalid battle condition expression: %s" % expr);
+		return "Invalid";
+	}
+
+	string n;
+	if (tokens[0].StartsWith("round")) {
+		return _ML_convert_battle_condition_count_expression(tokens[0], "ラウンド");
+	}
+	if (tokens[0].StartsWith("aegiscount")) {
+		return _ML_convert_battle_condition_count_expression(tokens[0], "支援");
+	}
+	if (tokens[0].StartsWith("conditioncount")) {
+		return _ML_convert_battle_condition_count_expression(tokens[0], "異常");
+	}
+	if (tokens[0].StartsWith("combo")) {
+		return _ML_convert_battle_condition_count_expression(tokens[0], "コンボ");
+	}
+	if (tokens[0].StartsWith("enemyactioncount")) {
+		return _ML_convert_battle_condition_count_expression(tokens[0], "敵行動");
+	}
+	if (tokens[0].StartsWith("ap")) {
+		return _ML_convert_battle_condition_count_expression(tokens[0], "ＡＰ");
+	}
+	if (tokens[0].StartsWith("leadercount")) {
+		return _ML_convert_battle_condition_count_expression(tokens[0], "リーダー");
+	}
+	if (tokens[0].StartsWith("nakedcount")) {
+		return _ML_convert_battle_condition_count_expression(tokens[0], "全裸");
+	}
+	if (tokens[0].StartsWith("lasthpdigit")) {
+		return _ML_convert_battle_condition_count_expression(tokens[0], "ＨＰ下一桁");
+	}
+	if (tokens[0] == "boss") {
+		return "ボス";
+	}
+	if (tokens[0] == "notboss") {
+		return "ボスなし";
+	}
+	if (tokens[0].StartsWith("hp")) {
+		return _ML_convert_battle_condition_count_expression(tokens[0], "ＨＰ");
+	}
+	if (tokens[0] == "damaged") {
+		return "ＨＰダメージあり";
+	}
+	if (tokens[0] == "undamaged") {
+		return "ＨＰダメージなし";
+	}
+	if (tokens[0] == "random") {
+		return "確率";
+	}
+	ML_WARNING("Invalid battle condition expression: %s" % expr);
+	return "Invalid";
+}
+
+string _ML_convert_battle_condition_count_expression(string expr, string type)
+{
+	int compare = 0;
+	string n;
+
+	if (expr.Contains("<=")) {
+		compare = -1;
+		n = _ML_battle_condition_get_count(expr, "<=");
+	} else if (expr.Contains(">=")) {
+		compare = 1;
+		n = _ML_battle_condition_get_count(expr, ">=");
+	} else if (expr.Contains("=")) {
+		compare = 0;
+		n = _ML_battle_condition_get_count(expr, "=");
+	} else {
+		ML_WARNING("Invalid battle condition expression: %s" % expr);
+		return "Invalid";
+	}
+
+	if (n == "") {
+		ML_WARNING("Invalid battle condition expression: %s" % expr);
+		return "Invalid";
+	}
+
+	if (compare < 0)
+		return n + type + "以下";
+	if (compare > 0)
+		return n + type + "以上";
+	return n + type;
+}
+
+string _ML_battle_condition_get_count(string expr, string sep)
+{
+	array<string> tokens = expr.Split(sep, 0);
+	if (tokens.Numof() != 2) {
+		ML_WARNING("Invalid battle condition expression: %s" % expr);
+		return "";
+	}
+	return tokens[1];
 }

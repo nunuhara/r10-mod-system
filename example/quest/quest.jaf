@@ -64,13 +64,26 @@ override int ML_HOOK_battle(string id, // コード名
 		int retval = ML_battle_commit(autobattle);
 
 		// set algorithm (predefined enemy action set)
-		ML_battle_set_algorithm("アルゴ／基本２", attr1, attr2);
+		// see `src/system/battle.jaf` for a list of algorithm names
+		//ML_battle_set_algorithm("アルゴ／基本２", attr1, attr2);
 
 		// instead of setting a standard algorithm, you can define a custom action
-		// set using the ML_battle_add_action function, e.g.
-		//ML_battle_add_action("", "", attr1, 1002, 0, 0, 0, 0, "", 0);
-		//ML_battle_add_action("", "", attr2, 1063, 0, 0, 0, 0, "", 0);
-		//ML_battle_add_action("", "", attr1, 1002, 1002, 0, 0, 0, "３ラウンド", 0);
+		// set using the ML_battle_add_action function:
+
+		// basic melee attack
+		ML_battle_add_action("", "", attr1, 1002, 0, 0, 0, 0, "", 0);
+		// basic ranged attack
+		ML_battle_add_action("", "", attr2, 1063, 0, 0, 0, 0, "", 0);
+		// 2 melee attacks on round 3
+		ML_battle_add_action("", "", attr1, 1002, 1002, 0, 0, 0, "round = 3", 0);
+		// 3 attacks every round unless you field a nude card
+		ML_battle_add_action("", "", attr1, 1002, 1063, 1002, 0, 0, "naked count = 0", 0);
+		// 3 attacks every round if Rance is fielded
+		ML_battle_add_action("", "", attr1, 1002, 1063, 0, 0, 0, "leader:ランス", 0);
+		// NOTE: When multiple conditions match, the conditional action that was
+		//       registered first is chosen.
+		// see `src/system/battle.jaf` for more on the condition DSL
+		// see also the `スキルデータ` table in Rance10EX.ex for skill IDs
 
 		return retval;
 	}

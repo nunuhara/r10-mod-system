@@ -17,3 +17,11 @@ void ML_disable_character(string name)
 {
 	Ｐ禁止キャラＯＮ(name);
 }
+
+void ML_LOG(string msg)
+{
+	if (!CrayfishLogViewer.IsOpenedViewer()) {
+		CrayfishLogViewer.OpenViewer();
+	}
+	CrayfishLogViewer.AddText(msg + "\n");
+}
