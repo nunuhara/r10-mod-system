@@ -37,6 +37,18 @@ On linux, you must compile [alice-tools](https://github.com/nunuhara/alice-tools
 and put the `alice` binary somewhere on your PATH. alice-tools >= 0.11.0 is
 required.
 
+Updating
+--------
+
+Follow the below steps to update to a new version of r10-mod-system:
+
+* Unpack the new release into a new directory inside of your game directory
+* IMPORTANT: copy the files `src.ain` and `srcpact.afa` from your old
+  r10-mod-system directory to the new one
+* Copy any installed mods from the `src` directory of your old installation to
+  the new one
+* Rebuild the mods by running the build script from the new installation
+
 Building
 --------
 
@@ -97,6 +109,19 @@ to run code at startup, you can override the `ML_HOOK_init` function:
 
 You should always call the `super` function at the end when overriding these
 functions so that other mods can use the same hooks.
+
+Version History
+---------------
+
+### 0.1.1
+
+* Add file size check for `src.ain` and `srcpact.afa`
+* Add support for editing Rance10Pact.afa
+* Implement English DSL for battle conditions
+
+### 0.1.0
+
+* Initial release
 
 Bugs
 ----
