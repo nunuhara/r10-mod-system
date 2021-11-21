@@ -7,11 +7,16 @@ Source = {
     "source.inc",
 }
 
-ModAin  = "src.ain"
-ExInput = "../Rance10EX.ex"
+AinInput  = "src.ain"
+ExInput   = "../Rance10EX.ex"
+PactInput = "srcpact.afa"
+
+AinInputSize  = 9719548
+PactInputSize = 531442
 
 CodeName  = "Rance10.ain"
 ExModName = "Rance10ModEX.ex"
+PactName  = "Rance10Pact.afa"
 CgName    = "Rance10ModCG.afa"
 SoundName = "Rance10ModSound.afa"
 FlatName  = "Rance10ModFlat.afa"
